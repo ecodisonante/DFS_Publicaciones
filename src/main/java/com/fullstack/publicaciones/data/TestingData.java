@@ -20,7 +20,7 @@ public class TestingData {
     Usuario fitnessfanatic = new Usuario("fitnessfanatic", "Diego Fitness", "diego_fitness@example.com", "contraseña456");
     Usuario techgeek = new Usuario("techgeek", "Laura Tecnológica", "laura_tecnologica@example.com", "secreto789");
 
-    List<Usuario> usuarios = Arrays.asList(musicfreak, foodiegirl, travelbug22, artlover, fitnessfanatic, techgeek);
+    public List<Usuario> usuarios = Arrays.asList(musicfreak, foodiegirl, travelbug22, artlover, fitnessfanatic, techgeek);
 
     Publicacion pub1 = new Publicacion(1, "Los 10 álbumes esenciales de la década", "Descubre las joyas musicales que definieron los últimos años.", "En esta lista, exploraremos diez álbumes que han dejado una marca indeleble en la última década. Desde el pop hasta el indie, ¡prepárate para descubrir nuevas experiencias auditivas!", musicfreak);
     Publicacion pub2 = new Publicacion(2, "Cómo comenzar tu propia colección de vinilos", "Sumérgete en el mundo de la música analógica con vinilos.", "¿Te gustaría comenzar tu propia colección de vinilos pero no sabes por dónde empezar? En este artículo, te guiaremos a través de los pasos para iniciar y construir una colección de vinilos que refleje tu pasión por la música.", musicfreak);
