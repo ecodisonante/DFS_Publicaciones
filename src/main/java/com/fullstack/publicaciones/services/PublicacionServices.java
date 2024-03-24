@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.fullstack.publicaciones.data.TestingData;
 import com.fullstack.publicaciones.model.Publicacion;
-import com.fullstack.publicaciones.model.PublicacionListDTO;
+import com.fullstack.publicaciones.model.PublicacionDTO;
 
 @Service
 public class PublicacionServices {
@@ -26,11 +26,11 @@ public class PublicacionServices {
         return null;
     }
 
-    public List<PublicacionListDTO> getPublicaciones() {
-        List<PublicacionListDTO> publicaciones = new ArrayList<>();
+    public List<PublicacionDTO> getPublicaciones() {
+        List<PublicacionDTO> publicaciones = new ArrayList<>();
 
         for (Publicacion pub : data.publicaciones) {
-            publicaciones.add(new PublicacionListDTO(
+            publicaciones.add(new PublicacionDTO(
                     pub.getId(),
                     pub.getnombreAutor(),
                     pub.getTitulo(),

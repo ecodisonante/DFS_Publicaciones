@@ -11,7 +11,6 @@ public class Comment {
 
     @Getter @Setter private String contenido;
     @Getter @Setter private int puntaje;
-    @Getter @Setter private int order;
 
     public Comment(int id, int publicacionId, Usuario autor, String contenido, int puntaje) {
         this.id = id;

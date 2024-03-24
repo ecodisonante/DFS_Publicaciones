@@ -46,7 +46,6 @@ public class Publicacion {
     }
 
     public void addComment(Comment newComment) {
-        newComment.setOrder(comentarios.size() + 1);
         comentarios.add(newComment);
     }
 

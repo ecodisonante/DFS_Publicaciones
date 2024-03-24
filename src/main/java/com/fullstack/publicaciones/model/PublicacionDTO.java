@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @AllArgsConstructor
-public class PublicacionListDTO {
+public class PublicacionDTO {
 
     @Getter @Setter int nr;
     @Getter @Setter String autor;
