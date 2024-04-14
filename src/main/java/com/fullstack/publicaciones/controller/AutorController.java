@@ -68,7 +68,7 @@ public class AutorController {
         }
     }
 
-    @PutMapping("path/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Object> putMethodName(@PathVariable Long id, @RequestBody Autor autor) {
         if (autor.getNombre() == null || autor.getNombre().isBlank()
                 || autor.getCorreo() == null || autor.getCorreo().isBlank())

@@ -14,29 +14,33 @@ public class PublicacionService implements IPublicacionService {
     @Autowired
     private PublicacionRepository publicacionRepository;
 
+    @Autowired
+    private EvaluacionService evaluacionService;
+
     @Override
     public List<Publicacion> getAllPublicacions() {
-
         var pubs = publicacionRepository.findAll();
-
-        // Cargar lista de referencias
         for (Publicacion p : pubs) {
-            p.setRefList(getReferencias(p.getId()));
+            p.setComentarios(getComentariosById(p.getId()));
+            p.setEvaluaciones(evaluacionService.getByPublicacionId(p.getId()));
         }
-
         return pubs;
     }
 
     @Override
     public Optional<Publicacion> getPublicacionById(Long id) {
-        return publicacionRepository.findById(id);
-    }
-    
-    @Override
-    public List<Publicacion> getReferencias(Long id) {
-        return publicacionRepository.findByReferencia(id);
+        var pub = publicacionRepository.findById(id);
+        if (pub.isPresent()) {
+            pub.get().setComentarios(getComentariosById(id));
+            pub.get().setEvaluaciones(evaluacionService.getByPublicacionId(id));
+        }
+        return pub;
     }
 
+    @Override
+    public List<Publicacion> getComentariosById(Long id) {
+        return publicacionRepository.findByReferenciaId(id);
+    }
 
     @Override
     public Publicacion createPublicacion(Publicacion publicacion) throws Exception {
@@ -51,19 +55,6 @@ public class PublicacionService implements IPublicacionService {
         } else {
             throw new Exception("No se encontró ID de Publicacion.");
         }
-    }
-
-    @Override
-    public Publicacion updateValoracion(Long id) {
-        var pub = publicacionRepository.findById(id).get();
-        var refs = publicacionRepository.findByReferencia(id);
-
-        if (refs.size() > 0)
-            pub.setValoracion(refs.stream().mapToDouble(Publicacion::getValoracion).average().getAsDouble());
-        else
-            pub.setValoracion(0);
-
-        return publicacionRepository.save(pub);
     }
 
     @Override

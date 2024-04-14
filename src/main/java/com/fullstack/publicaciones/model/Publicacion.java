@@ -3,6 +3,8 @@ package com.fullstack.publicaciones.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -36,24 +38,27 @@ public class Publicacion {
     @Column(name = "contenido")
     private String contenido;
 
-    @Column(name = "valoracion")
-    private double valoracion;
-
-    @Column(name = "nivel")
-    private int nivel;
-
-    @Column(name = "referencia", nullable = true)
-    private long referencia;
+    @ManyToOne
+    @JoinColumn(name = "referencia_id", nullable = true)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private Publicacion referencia;
 
     @Transient
-    private List<Publicacion> refList;
+    private List<Publicacion> comentarios;
+
+    @Transient
+    private List<Evaluacion> evaluaciones;
 
     public PublicacionDTO toDto() {
+        double prom = evaluaciones == null || evaluaciones.isEmpty() ? 0
+                : (evaluaciones.stream().mapToDouble(Evaluacion::getPuntaje)
+                        .average().getAsDouble() * 10) / 10;
+
         return new PublicacionDTO(
                 this.id,
                 this.autor.getNombre(),
                 this.contenido,
-                refList.size(),
-                Math.round(refList.stream().mapToDouble(Publicacion::getValoracion).average().getAsDouble() * 10) / 10);
+                comentarios.size(),
+                prom);
     }
 }

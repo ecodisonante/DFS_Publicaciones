@@ -23,7 +23,10 @@ public class Autor {
     @Column(name = "nombre", length = 150)
     private String nombre;
 
-    @Column(name = "cant_publicaciones")
+    @Column(name = "publicaciones")
     private int publicaciones;
+    
+    @Column(name = "evaluaciones")
+    private int evaluaciones;
     
 }

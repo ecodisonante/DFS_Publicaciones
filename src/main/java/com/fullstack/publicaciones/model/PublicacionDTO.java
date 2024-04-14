@@ -10,7 +10,7 @@ public class PublicacionDTO {
     long id;
     String autor;
     String conetnido;
-    int comentarios;
+    int cantComentarios;
     double valoracion;
 
 }

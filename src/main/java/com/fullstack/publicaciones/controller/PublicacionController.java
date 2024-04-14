@@ -1,7 +1,6 @@
 package com.fullstack.publicaciones.controller;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -66,29 +65,12 @@ public class PublicacionController {
             if (isValidResponse != null)
                 return ResponseEntity.badRequest().body(isValidResponse);
 
-            // Identifica si es respuesta o base
-            if (pub.getReferencia() > 0) {
-                var ref = publicacionService.getPublicacionById(pub.getReferencia()).get();
-                pub.setNivel(ref.getNivel() + 1);
-
-            } else {
-                pub.setNivel(1);
-            }
-
-            // La valoracion es solo para las respuestas
-            if (pub.getNivel() == 1)
-                pub.setValoracion(0);
-
             pub.setFecha(LocalDateTime.now());
 
             var createResult = publicacionService.createPublicacion(pub);
 
             // Aumentar cantidad de publicaciones del Autor
             autorService.increasePublicaciones(pub.getAutor().getId());
-
-            // Si es comentario, actualiza publicacion referenciada
-            if (pub.getReferencia() > 0)
-                publicacionService.updateValoracion(pub.getReferencia());
 
             return ResponseEntity.ok(createResult);
         } catch (Exception e) {
@@ -106,9 +88,11 @@ public class PublicacionController {
                 return ResponseEntity.badRequest().body(isValidResponse);
 
             // Si tiene respuestas, no se puede editar
-            var respuestas = publicacionService.getReferencias(id);
+            var respuestas = publicacionService.getComentariosById(id);
             if (respuestas.size() > 0)
                 throw new Exception("No puede editar una publicacion que ya tiene comentarios.");
+
+            publicacion.setFecha(LocalDateTime.now());
 
             return ResponseEntity.ok(publicacionService.updatePublicacion(id, publicacion));
         } catch (Exception e) {
@@ -140,7 +124,8 @@ public class PublicacionController {
         if (pub.getContenido() == null || pub.getContenido().isEmpty())
             return new ResponseDTO(HttpStatus.BAD_REQUEST.value(), "Debe ingresar el contenido.");
 
-        if (pub.getReferencia() > 0 && publicacionService.getPublicacionById(pub.getReferencia()).isEmpty())
+        if (pub.getReferencia() != null && pub.getReferencia().getId() > 0
+                && publicacionService.getPublicacionById(pub.getReferencia().getId()).isEmpty())
             return new ResponseDTO(HttpStatus.BAD_REQUEST.value(), "No se encontró ID de Referencia.");
 
         return null;
