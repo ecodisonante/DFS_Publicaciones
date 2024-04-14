@@ -5,12 +5,9 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class PublicacionDTO {
+public class ResponseDTO {
 
-    long id;
-    String autor;
-    String conetnido;
-    int comentarios;
-    double valoracion;
+    int code;
+    String message;
 
 }

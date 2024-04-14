@@ -12,8 +12,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.Data;
 
 @Data
@@ -42,13 +42,18 @@ public class Publicacion {
     @Column(name = "nivel")
     private int nivel;
 
-    @OneToMany
-    @JoinColumn(name = "referencia_id", nullable = true)
-    private List<Publicacion> comentarios;
+    @Column(name = "referencia", nullable = true)
+    private long referencia;
 
-    public void calculaValoracion() {
-        this.valoracion = comentarios.stream().mapToDouble(Publicacion::getValoracion).average().getAsDouble();
+    @Transient
+    private List<Publicacion> refList;
+
+    public PublicacionDTO toDto() {
+        return new PublicacionDTO(
+                this.id,
+                this.autor.getNombre(),
+                this.contenido,
+                refList.size(),
+                Math.round(refList.stream().mapToDouble(Publicacion::getValoracion).average().getAsDouble() * 10) / 10);
     }
-
-
 }
