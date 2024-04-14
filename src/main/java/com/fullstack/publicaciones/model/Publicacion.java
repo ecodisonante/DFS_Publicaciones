@@ -3,6 +3,8 @@ package com.fullstack.publicaciones.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,8 +14,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.Data;
 
 @Data
@@ -36,19 +38,27 @@ public class Publicacion {
     @Column(name = "contenido")
     private String contenido;
 
-    @Column(name = "valoracion")
-    private double valoracion;
-
-    @Column(name = "nivel")
-    private int nivel;
-
-    @OneToMany
+    @ManyToOne
     @JoinColumn(name = "referencia_id", nullable = true)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private Publicacion referencia;
+
+    @Transient
     private List<Publicacion> comentarios;
 
-    public void calculaValoracion() {
-        this.valoracion = comentarios.stream().mapToDouble(Publicacion::getValoracion).average().getAsDouble();
+    @Transient
+    private List<Evaluacion> evaluaciones;
+
+    public PublicacionDTO toDto() {
+        double prom = evaluaciones == null || evaluaciones.isEmpty() ? 0
+                : (evaluaciones.stream().mapToDouble(Evaluacion::getPuntaje)
+                        .average().getAsDouble() * 10) / 10;
+
+        return new PublicacionDTO(
+                this.id,
+                this.autor.getNombre(),
+                this.contenido,
+                comentarios.size(),
+                prom);
     }
-
-
 }
