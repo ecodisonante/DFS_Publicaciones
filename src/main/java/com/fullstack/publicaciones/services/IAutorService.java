@@ -5,7 +5,7 @@ import java.util.Optional;
 import com.fullstack.publicaciones.model.Autor;
 
 public interface IAutorService {
-    
+
     List<Autor> getAllAutors();
 
     Optional<Autor> getAutorById(Long id);
@@ -15,5 +15,7 @@ public interface IAutorService {
     Autor updateAutor(Long id, Autor autor) throws Exception;
 
     void deleteAutor(Long id) throws Exception;
+
+    Autor increasePublicaciones(Long id);
 
 }
