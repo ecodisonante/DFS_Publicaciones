@@ -21,7 +21,8 @@ public class PublicacionService implements IPublicacionService {
     public List<Publicacion> getAllPublicacions() {
         var pubs = publicacionRepository.findAll();
         for (Publicacion p : pubs) {
-            p.setComentarios(getComentariosById(p.getId()));
+            var coms = getComentariosById(p.getId()).stream().map(Publicacion::toDto).toList();
+            p.setComentarios(coms);
             p.setEvaluaciones(evaluacionService.getByPublicacionId(p.getId()));
         }
         return pubs;
@@ -31,7 +32,6 @@ public class PublicacionService implements IPublicacionService {
     public Optional<Publicacion> getPublicacionById(Long id) {
         var pub = publicacionRepository.findById(id);
         if (pub.isPresent()) {
-            pub.get().setComentarios(getComentariosById(id));
             pub.get().setEvaluaciones(evaluacionService.getByPublicacionId(id));
         }
         return pub;

@@ -44,7 +44,7 @@ public class Publicacion {
     private Publicacion referencia;
 
     @Transient
-    private List<Publicacion> comentarios;
+    private List<PublicacionDTO> comentarios;
 
     @Transient
     private List<Evaluacion> evaluaciones;
@@ -54,11 +54,13 @@ public class Publicacion {
                 : (evaluaciones.stream().mapToDouble(Evaluacion::getPuntaje)
                         .average().getAsDouble() * 10) / 10;
 
+        int numComs = comentarios == null ? 0 : comentarios.size();
+
         return new PublicacionDTO(
                 this.id,
                 this.autor.getNombre(),
                 this.contenido,
-                comentarios.size(),
+                numComs,
                 prom);
     }
 }

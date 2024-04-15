@@ -49,6 +49,9 @@ public class PublicacionController {
                 return ResponseEntity.badRequest().body(
                         new ResponseDTO(HttpStatus.BAD_REQUEST.value(), "No existe la publicacion con el id " + id));
 
+            var coms = publicacionService.getComentariosById(id);
+            publicacion.get().setComentarios(coms.stream().map(Publicacion::toDto).toList());
+
             return ResponseEntity.ok(publicacion.get());
 
         } catch (Exception e) {
@@ -70,7 +73,7 @@ public class PublicacionController {
             var createResult = publicacionService.createPublicacion(pub);
 
             // Aumentar cantidad de publicaciones del Autor
-            autorService.increasePublicaciones(pub.getAutor().getId());
+            autorService.updateCantPub(pub.getAutor().getId());
 
             return ResponseEntity.ok(createResult);
         } catch (Exception e) {
