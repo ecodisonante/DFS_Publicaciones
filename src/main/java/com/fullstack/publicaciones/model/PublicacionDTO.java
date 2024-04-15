@@ -1,17 +1,16 @@
 package com.fullstack.publicaciones.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
+@Data
 @AllArgsConstructor
 public class PublicacionDTO {
 
-    @Getter @Setter int nr;
-    @Getter @Setter String autor;
-    @Getter @Setter String titulo;
-    @Getter @Setter String resumen;
-    @Getter @Setter int comentarios;
-    @Getter @Setter float valoracion;
+    long id;
+    String autor;
+    String conetnido;
+    int cantComentarios;
+    double valoracion;
 
 }
