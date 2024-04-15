@@ -16,6 +16,8 @@ public interface IAutorService {
 
     void deleteAutor(Long id) throws Exception;
 
-    Autor increasePublicaciones(Long id);
+    Autor updateCantPub(Long id);
+
+    Autor updateCantEval(Long id);
 
 }

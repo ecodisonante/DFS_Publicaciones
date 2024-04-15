@@ -11,4 +11,5 @@ public interface EvaluacionRepository extends JpaRepository<Evaluacion, Long> {
     List<Evaluacion> findByPublicacionId(long id);
 
     Optional<Evaluacion> findByAutorIdAndPublicacionId(long autorId, long publicacionId);
+    
 }

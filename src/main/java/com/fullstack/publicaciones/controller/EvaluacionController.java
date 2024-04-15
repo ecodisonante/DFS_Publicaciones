@@ -64,7 +64,10 @@ public class EvaluacionController {
             if (isValidResponse != null)
                 return ResponseEntity.badRequest().body(isValidResponse);
 
-            return ResponseEntity.ok(evaluacionService.createEvaluacion(evaluacion));
+                var eval = evaluacionService.createEvaluacion(evaluacion);
+                autorService.updateCantEval(evaluacion.getAutor().getId());
+                
+            return ResponseEntity.ok(eval);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseDTO(
                     HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()));

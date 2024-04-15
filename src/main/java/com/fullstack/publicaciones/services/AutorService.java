@@ -52,9 +52,17 @@ public class AutorService implements IAutorService {
     }
 
     @Override
-    public Autor increasePublicaciones(Long id) {
+    public Autor updateCantPub(Long id) {
         var autor = autorRepository.findById(id).get();
         autor.setPublicaciones(autor.getPublicaciones() + 1);
+        return autorRepository.save(autor);
+    }
+
+
+    @Override
+    public Autor updateCantEval(Long id) {
+        var autor = autorRepository.findById(id).get();
+        autor.setEvaluaciones(autor.getEvaluaciones() + 1);
         return autorRepository.save(autor);
     }
 
