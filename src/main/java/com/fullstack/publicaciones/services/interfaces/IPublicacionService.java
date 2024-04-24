@@ -1,4 +1,4 @@
-package com.fullstack.publicaciones.services;
+package com.fullstack.publicaciones.services.interfaces;
 
 import java.util.List;
 import java.util.Optional;

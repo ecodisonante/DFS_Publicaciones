@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.fullstack.publicaciones.model.Autor;
 import com.fullstack.publicaciones.repository.AutorRepository;
+import com.fullstack.publicaciones.services.interfaces.IAutorService;
 
 @Service
 public class AutorService implements IAutorService {

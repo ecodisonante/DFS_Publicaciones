@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.fullstack.publicaciones.model.Evaluacion;
 import com.fullstack.publicaciones.repository.EvaluacionRepository;
+import com.fullstack.publicaciones.services.interfaces.IEvaluacionService;
 
 @Service
 public class EvaluacionService implements IEvaluacionService {

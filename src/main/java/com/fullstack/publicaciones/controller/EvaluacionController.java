@@ -16,8 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fullstack.publicaciones.model.Evaluacion;
 import com.fullstack.publicaciones.model.ResponseDTO;
-import com.fullstack.publicaciones.services.IAutorService;
-import com.fullstack.publicaciones.services.IEvaluacionService;
+import com.fullstack.publicaciones.services.interfaces.IAutorService;
+import com.fullstack.publicaciones.services.interfaces.IEvaluacionService;
+
 import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
