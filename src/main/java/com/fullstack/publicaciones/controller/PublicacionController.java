@@ -115,7 +115,7 @@ public class PublicacionController {
             return ResponseEntity.ok(pubModel);
 
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseDTO(
+            return ResponseEntity.internalServerError().body(new ResponseDTO(
                     HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()));
         }
     }
@@ -131,7 +131,10 @@ public class PublicacionController {
             // Si tiene respuestas, no se puede editar
             var respuestas = publicacionService.getComentariosById(id);
             if (!respuestas.isEmpty())
-                throw new Exception("No puede editar una publicacion que ya tiene comentarios.");
+                return ResponseEntity.badRequest().body(
+                        new ResponseDTO(
+                                HttpStatus.BAD_REQUEST.value(),
+                                "No puede editar una publicacion que ya tiene comentarios."));
 
             publicacion.setFecha(LocalDateTime.now());
 
@@ -146,8 +149,9 @@ public class PublicacionController {
                             .withRel(ALL_PUBLICACIONES));
 
             return ResponseEntity.ok(pubModel);
+
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseDTO(
+            return ResponseEntity.internalServerError().body(new ResponseDTO(
                     HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()));
         }
     }
