@@ -16,11 +16,15 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
 @Table(name = "publicacion")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Publicacion {
 
     @Id
