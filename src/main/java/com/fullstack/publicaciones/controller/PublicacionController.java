@@ -121,7 +121,7 @@ public class PublicacionController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> putMethodName(@PathVariable Long id, @RequestBody Publicacion publicacion) {
+    public ResponseEntity<Object> updatePublicacion(@PathVariable Long id, @RequestBody Publicacion publicacion) {
         try {
             // Validar publicacion entrante
             var isValidResponse = validarPublicacion(publicacion);
