@@ -8,6 +8,12 @@ Considerar un microservicio que permita manipular publicaciones con sus respecti
  
 ## Versión
 
+### 2.1 - Exp3_S8
+
+- Implementar libreria HATEOAS
+- Pruebas Unitarias
+- proyecto dockerizado
+
 ### 2.0 - Exp3_S6
 
 - Conexion a Base de Datos

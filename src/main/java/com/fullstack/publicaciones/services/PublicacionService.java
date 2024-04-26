@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.fullstack.publicaciones.model.Publicacion;
 import com.fullstack.publicaciones.repository.PublicacionRepository;
+import com.fullstack.publicaciones.services.interfaces.IPublicacionService;
 
 @Service
 public class PublicacionService implements IPublicacionService {

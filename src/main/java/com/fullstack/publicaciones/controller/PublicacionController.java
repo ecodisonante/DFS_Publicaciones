@@ -3,8 +3,12 @@ package com.fullstack.publicaciones.controller;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,8 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fullstack.publicaciones.model.Publicacion;
 import com.fullstack.publicaciones.model.ResponseDTO;
-import com.fullstack.publicaciones.services.IAutorService;
-import com.fullstack.publicaciones.services.IPublicacionService;
+import com.fullstack.publicaciones.services.interfaces.IAutorService;
+import com.fullstack.publicaciones.services.interfaces.IPublicacionService;
+
 import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
@@ -30,14 +35,29 @@ public class PublicacionController {
     @Autowired
     IAutorService autorService;
 
+    private static final String ALL_PUBLICACIONES = "lista-publicaciones";
+
     @GetMapping
     public ResponseEntity<Object> getPublicacionesList() {
         List<Publicacion> publicaciones = publicacionService.getAllPublicacions();
 
-        if (!publicaciones.isEmpty())
-            return ResponseEntity.ok(publicaciones.stream().map(Publicacion::toDto));
-        else
+        if (!publicaciones.isEmpty()) {
+            var publicacionsResouce = publicaciones.stream()
+                    .map(Publicacion::toDto)
+                    .map(pub -> EntityModel.of(pub,
+                            WebMvcLinkBuilder
+                                    .linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getPublicacion(pub.getId()))
+                                    .withSelfRel()))
+                    .collect(Collectors.toList());
+
+            WebMvcLinkBuilder linkTo = WebMvcLinkBuilder
+                    .linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getPublicacionesList());
+
+            return ResponseEntity.ok(CollectionModel.of(publicacionsResouce, linkTo.withRel("publicaciones")));
+
+        } else {
             return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK.value(), "No hay publicaciones ingresadas"));
+        }
     }
 
     @GetMapping("/{id}")
@@ -45,17 +65,26 @@ public class PublicacionController {
         try {
             Optional<Publicacion> publicacion = publicacionService.getPublicacionById(id);
 
-            if (!publicacion.isPresent())
+            if (publicacion.isPresent()) {
+                var coms = publicacionService.getComentariosById(id);
+                publicacion.get().setComentarios(coms.stream().map(Publicacion::toDto).toList());
+
+                var pubModels = EntityModel.of(publicacion.get(),
+                        WebMvcLinkBuilder
+                                .linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getPublicacion(id))
+                                .withSelfRel(),
+                        WebMvcLinkBuilder
+                                .linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getPublicacionesList())
+                                .withRel(ALL_PUBLICACIONES));
+
+                return ResponseEntity.ok(pubModels);
+
+            } else
                 return ResponseEntity.badRequest().body(
                         new ResponseDTO(HttpStatus.BAD_REQUEST.value(), "No existe la publicacion con el id " + id));
 
-            var coms = publicacionService.getComentariosById(id);
-            publicacion.get().setComentarios(coms.stream().map(Publicacion::toDto).toList());
-
-            return ResponseEntity.ok(publicacion.get());
-
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseDTO(
+            return ResponseEntity.internalServerError().body(new ResponseDTO(
                     HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()));
         }
     }
@@ -72,18 +101,27 @@ public class PublicacionController {
 
             var createResult = publicacionService.createPublicacion(pub);
 
+            var pubModel = EntityModel.of(createResult,
+                    WebMvcLinkBuilder
+                            .linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getPublicacion(createResult.getId()))
+                            .withSelfRel(),
+                    WebMvcLinkBuilder
+                            .linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getPublicacionesList())
+                            .withRel(ALL_PUBLICACIONES));
+
             // Aumentar cantidad de publicaciones del Autor
             autorService.updateCantPub(pub.getAutor().getId());
 
-            return ResponseEntity.ok(createResult);
+            return ResponseEntity.ok(pubModel);
+
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseDTO(
+            return ResponseEntity.internalServerError().body(new ResponseDTO(
                     HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()));
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> putMethodName(@PathVariable Long id, @RequestBody Publicacion publicacion) {
+    public ResponseEntity<Object> updatePublicacion(@PathVariable Long id, @RequestBody Publicacion publicacion) {
         try {
             // Validar publicacion entrante
             var isValidResponse = validarPublicacion(publicacion);
@@ -92,14 +130,28 @@ public class PublicacionController {
 
             // Si tiene respuestas, no se puede editar
             var respuestas = publicacionService.getComentariosById(id);
-            if (respuestas.size() > 0)
-                throw new Exception("No puede editar una publicacion que ya tiene comentarios.");
+            if (!respuestas.isEmpty())
+                return ResponseEntity.badRequest().body(
+                        new ResponseDTO(
+                                HttpStatus.BAD_REQUEST.value(),
+                                "No puede editar una publicacion que ya tiene comentarios."));
 
             publicacion.setFecha(LocalDateTime.now());
 
-            return ResponseEntity.ok(publicacionService.updatePublicacion(id, publicacion));
+            var updated = publicacionService.updatePublicacion(id, publicacion);
+
+            var pubModel = EntityModel.of(updated,
+                    WebMvcLinkBuilder
+                            .linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getPublicacion(updated.getId()))
+                            .withSelfRel(),
+                    WebMvcLinkBuilder
+                            .linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getPublicacionesList())
+                            .withRel(ALL_PUBLICACIONES));
+
+            return ResponseEntity.ok(pubModel);
+
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseDTO(
+            return ResponseEntity.internalServerError().body(new ResponseDTO(
                     HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()));
         }
     }
