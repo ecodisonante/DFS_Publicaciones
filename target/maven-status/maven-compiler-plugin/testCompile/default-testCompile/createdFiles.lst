@@ -2,4 +2,5 @@ com/fullstack/publicaciones/repository/PublicacionRepositoryTest.class
 com/fullstack/publicaciones/services/PublicacionServiceTest.class
 com/fullstack/publicaciones/controller/PublicacionControllerTest.class
 com/fullstack/publicaciones/repository/AutorRepositoryTest.class
+com/fullstack/publicaciones/controller/AutorControllerTest.class
 com/fullstack/publicaciones/PublicacionesApplicationTests.class
